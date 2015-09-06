@@ -1,0 +1,91 @@
+//Exercise Basic Graphics
+/*
+Step 2: Updating the DrawView
+
+Open the DrawView.java file. In this class, you need to complete the implementation of the constructor and the onDraw() method.
+Replace the //TODO CREATE PAINT OBJECTS with the following code.
+*/
+
+   redpaint = new Paint();
+        redpaint.setColor(Color.RED);
+        bluepaint = new Paint();
+        bluepaint.setColor(Color.BLUE);
+
+//Replace the //TODO CREATE AN ANDROID GUY BITMAP with the following code.
+
+android_guy = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher),50,50, false);
+
+//Replace the //TODO DRAW ITEMS ON CANVAS with the following code:
+
+
+        canvas.drawLine(width / 2, height-100, width / 2, height, bluepaint);
+        canvas.drawRect(width / 2 - 30, height - 10, width / 2 + 30, height, bluepaint);
+        canvas.drawCircle(width / 2, height - 40, 10, redpaint);
+        canvas.drawRect(width / 2 - 10, height - 40, width / 2 + 10, height, bluepaint);
+        canvas.drawBitmap(android_guy, width/2, 0, null);
+
+/*
+Exercise shooting game
+Step 1: Examining the Project Files
+
+Download the ShootingGame.zip file, unzip it and import the project into Android Studio.
+Open the ShootingGame.java file.
+Open the activity_shooting_game.xml file. Note on the use of the custom view in the UI layout.
+Then, open the remaining java files and examine the contents.
+
+Update the drawGameBoard() method in the DrawView class as shown below.
+*/
+
+  canvas.drawColor(Color.WHITE);     //if you want another background color
+        // Draw the cannon
+        cannon.draw(canvas);
+
+        // Draw all the bullets
+        for (int i = 0; i < bullets.size(); i++ ) {
+            if (bullets.get(i) != null) {
+                bullets.get(i).draw(canvas);
+
+                if (bullets.get(i).move() == false) {
+                    bullets.remove(i);
+                }
+            }
+        }
+
+        // Draw all the explosions, at those locations where the bullet
+        // hits the Android Guy
+        for (int i = 0; i < explosions.size(); i++ ) {
+            if (explosions.get(i) != null) {
+                if (explosions.get(i).draw(canvas) == false) {
+                    explosions.remove(i);
+                }
+            }
+        }
+
+        // If the Android Guy is falling, check to see if any of the bullets
+        // hit the Guy. Draw the Android Guy
+        if (androidGuy != null) {
+            androidGuy.draw(canvas);
+
+            RectF guyRect = androidGuy.getRect();
+
+            for (int i = 0; i < bullets.size(); i++ ) {
+
+                // The rectangle surrounding the Guy and Bullet intersect, then it's a collision
+                // Generate an explosion at that location and delete the Guy and bullet. Generate
+                // a new Android Guy to fall from the top.
+                if (RectF.intersects(guyRect, bullets.get(i).getRect())) {
+                    explosions.add(new Explosion(Color.RED,mContext, androidGuy.getX(), androidGuy.getY()));
+                    androidGuy.reset();
+                    bullets.remove(i);
+                    break;
+                }
+
+            }
+
+            if (androidGuy.move() == false) {
+                androidGuy = null;
+            }
+        }
+
+
+
